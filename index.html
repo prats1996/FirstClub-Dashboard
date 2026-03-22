@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>FirstClub · Bengaluru Intelligence Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --or:#E8520A;--or-l:#FEF0E8;--or-m:#F5935A;
+  --tl:#0F6E56;--tl-l:#E1F5EE;
+  --am:#BA7517;--am-l:#FAEEDA;
+  --rd:#A32D2D;--rd-l:#FCEBEB;
+  --gn:#3B6D11;--gn-l:#EAF3DE;
+  --bl:#185FA5;--bl-l:#E6F1FB;
+  --pu:#534AB7;--pu-l:#EEEDFE;
+  --pk:#993556;--pk-l:#FBEAF0;
+  --co:#993C1D;--co-l:#FAECE7;
+  --bg:#f4f2ed;--sf:#fff;--sf2:#edeae4;
+  --tx:#1a1a1a;--tx2:#666;--tx3:#999;
+  --bd:rgba(0,0,0,0.09);--bd2:rgba(0,0,0,0.05);
+  --font:'DM Sans',sans-serif;--mono:'Space Mono',monospace;
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#1a1917;--sf:#242320;--sf2:#2e2c29;--tx:#f0ede8;--tx2:#9e9b96;--tx3:#6e6b66;--bd:rgba(255,255,255,0.09);--bd2:rgba(255,255,255,0.05)}
+}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100vh}
+.shell{max-width:1040px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+
+/* TOP BAR */
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.4rem;gap:12px;flex-wrap:wrap}
+.brand-logo{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--or)}
+.brand-logo span{color:var(--tx2);font-weight:400}
+.brand-city{display:inline-flex;align-items:center;gap:5px;font-size:11px;background:var(--gn-l);color:var(--gn);padding:3px 10px;border-radius:20px;font-weight:500;margin-left:8px}
+.dot-live{width:6px;height:6px;border-radius:50%;background:var(--gn)}
+.tabs{display:flex;gap:3px;background:var(--sf2);border-radius:12px;padding:4px;flex-wrap:wrap}
+.tab{padding:7px 14px;border-radius:9px;border:none;background:transparent;font-family:var(--font);font-size:12.5px;font-weight:500;cursor:pointer;color:var(--tx2);transition:all .15s;white-space:nowrap}
+.tab.active{background:var(--sf);color:var(--or);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.tab.t-opp.active{color:var(--pu)}
+.tab.t-port.active{color:var(--tl)}
+.tab:hover:not(.active){color:var(--tx)}
+
+/* HEALTH BANNER */
+.hb{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:14px;align-items:center;background:var(--sf);border-radius:12px;border:1px solid var(--bd);padding:.95rem 1.2rem;margin-bottom:1.2rem}
+.hb-div{width:1px;background:var(--bd);height:44px}
+.hb-stat{display:flex;flex-direction:column;gap:2px}
+.hb-val{font-family:var(--mono);font-size:17px;font-weight:500}
+.hb-lbl{font-size:11px;color:var(--tx2)}
+.hb-pills{display:flex;flex-direction:column;gap:4px;margin-left:auto}
+.vp{font-size:10px;font-weight:500;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.vp-warn{background:var(--am-l);color:var(--am)}.vp-bad{background:var(--rd-l);color:var(--rd)}.vp-ok{background:var(--gn-l);color:var(--gn)}
+.score-ring{position:relative;width:60px;height:60px;flex-shrink:0}
+.score-ring svg{transform:rotate(-90deg)}
+.score-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:15px;font-weight:700}
+
+/* PANELS & SUB-TABS */
+.panel{display:none}.panel.active{display:block}
+.panel-title{font-size:18px;font-weight:500;margin-bottom:2px}
+.panel-sub{font-size:12px;color:var(--tx2);margin-bottom:1rem}
+.sub-tabs{display:flex;gap:3px;margin-bottom:1.1rem}
+.stab{padding:6px 14px;border-radius:8px;border:1px solid var(--bd);background:transparent;font-family:var(--font);font-size:12px;font-weight:500;cursor:pointer;color:var(--tx2);transition:all .14s}
+.stab.active{background:var(--pu-l);border-color:#AFA9EC;color:var(--pu)}
+.stab.active.s-teal{background:var(--tl-l);border-color:#5DCAA5;color:var(--tl)}
+.spanel{display:none}.spanel.active{display:block}
+
+/* REFRESH PILL */
+.rp{display:inline-flex;align-items:center;gap:6px;font-size:11px;background:var(--sf2);border-radius:20px;padding:4px 11px;color:var(--tx2);margin-bottom:1.1rem}
+.rp-dot{width:7px;height:7px;border-radius:50%}
+
+/* FILTERS */
+.fb{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem;align-items:center}
+.fl{font-size:10px;font-weight:500;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-right:2px}
+.fc{font-family:var(--font);font-size:12px;padding:4px 12px;border-radius:20px;border:1px solid var(--bd);background:var(--sf);cursor:pointer;color:var(--tx2);transition:all .12s}
+.fc.on{background:var(--or-l);border-color:var(--or-m);color:var(--or)}
+.fc:hover:not(.on){background:var(--sf2)}
+
+/* SECTION LABEL */
+.sl{font-size:10px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:var(--tx3);margin-bottom:8px}
+
+/* KPI GRID */
+.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(136px,1fr));gap:9px;margin-bottom:1.1rem}
+.kpi{background:var(--sf);border-radius:10px;border:1px solid var(--bd);padding:.8rem .95rem}
+.kpi-lbl{font-size:10px;color:var(--tx2);margin-bottom:4px;font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+.kpi-val{font-size:20px;font-weight:500;font-family:var(--mono);line-height:1;color:var(--tx)}
+.kpi-d{font-size:11px;margin-top:4px;font-weight:500}
+.up{color:var(--gn)}.dn{color:var(--rd)}.wn{color:var(--am)}
+.kpi.al{border-left:3px solid var(--or)}.kpi.atl{border-left:3px solid var(--tl)}
+.kpi.ard{border-left:3px solid var(--rd)}.kpi.abl{border-left:3px solid var(--bl)}
+.kpi.apu{border-left:3px solid var(--pu)}.kpi.aam{border-left:3px solid var(--am)}
+.kpi.agn{border-left:3px solid var(--gn)}.kpi.apk{border-left:3px solid var(--pk)}
+
+/* CARDS & LAYOUT */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:1.1rem}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;margin-bottom:1.1rem}
+.card{background:var(--sf);border-radius:10px;border:1px solid var(--bd);padding:.9rem 1rem}
+.card-title{font-size:12px;font-weight:500;margin-bottom:8px;color:var(--tx);text-transform:uppercase;letter-spacing:.05em}
+
+/* TABLES */
+.mt{width:100%;font-size:12px;border-collapse:collapse}
+.mt th{text-align:left;color:var(--tx2);font-weight:500;padding:4px 0;border-bottom:1px solid var(--bd);font-size:10px;text-transform:uppercase;letter-spacing:.05em}
+.mt td{padding:5px 0;border-bottom:1px solid var(--bd2);color:var(--tx);font-size:12px}
+.mt tr:last-child td{border-bottom:none}
+
+/* BADGES */
+.b{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:10px}
+.bg{background:var(--gn-l);color:var(--gn)}.br{background:var(--rd-l);color:var(--rd)}
+.ba{background:var(--am-l);color:var(--am)}.bb{background:var(--bl-l);color:var(--bl)}
+.bo{background:var(--or-l);color:var(--or)}.bp{background:var(--pu-l);color:var(--pu)}
+.btl{background:var(--tl-l);color:var(--tl)}.bpk{background:var(--pk-l);color:var(--pk)}
+.bco{background:var(--co-l);color:var(--co)}
+
+/* BAR ROWS */
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px}
+.bar-lbl{min-width:98px;color:var(--tx2);font-size:11px}
+.bar-tr{flex:1;height:6px;background:var(--sf2);border-radius:3px;overflow:hidden}
+.bar-fi{height:100%;border-radius:3px}
+.bar-v{min-width:38px;text-align:right;font-family:var(--mono);font-size:11px;color:var(--tx)}
+
+/* INFO ROWS */
+.ir{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--bd2)}
+.ir:last-child{border-bottom:none}
+.ik{color:var(--tx2)}.iv{font-weight:500;font-family:var(--mono);color:var(--tx)}
+
+/* DECISIONS */
+.dec{background:var(--or-l);border-radius:10px;padding:.9rem 1rem;border:1px solid var(--or-m)}
+.dec-title{font-size:10px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:var(--or);margin-bottom:7px}
+.di{display:flex;gap:8px;margin-bottom:5px;font-size:12px;color:#3a2010;line-height:1.5}
+.di:last-child{margin-bottom:0}
+.d-dot{width:5px;height:5px;border-radius:50%;background:var(--or);flex-shrink:0;margin-top:5px}
+
+/* LIFECYCLE ROW */
+.lc-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.lc-cell{text-align:center}
+.lc-lbl{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.lc-val{font-family:var(--mono);font-size:17px;font-weight:500}
+.lc-tag{font-size:10px;margin-top:2px}
+
+/* OPPORTUNITIES */
+.opp-banner{background:var(--pu-l);border:1px solid #AFA9EC;border-radius:12px;padding:.95rem 1.2rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.opp-icon{width:36px;height:36px;border-radius:50%;background:var(--pu-l);border:1px solid #AFA9EC;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.opp-banner-t1{font-size:13px;font-weight:500;color:#3C3489;margin-bottom:2px}
+.opp-banner-t2{font-size:11px;color:#534AB7}
+.opp-total{margin-left:auto;text-align:right}
+.opp-total-v{font-family:var(--mono);font-size:22px;font-weight:700;color:#3C3489}
+.opp-total-l{font-size:10px;color:#534AB7;text-transform:uppercase;letter-spacing:.06em}
+
+.opp-card{background:var(--sf);border-radius:10px;border:1px solid var(--bd);padding:.95rem 1rem;margin-bottom:10px}
+.opp-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:9px;gap:12px}
+.opp-title{font-size:13px;font-weight:500;color:var(--tx);margin-bottom:2px}
+.opp-desc{font-size:12px;color:var(--tx2);line-height:1.5}
+.opp-impact-v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--pu)}
+.opp-impact-l{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;text-align:right}
+.opp-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:9px}
+.opp-m{background:var(--sf2);border-radius:8px;padding:.55rem .7rem}
+.opp-m-l{font-size:10px;color:var(--tx3);margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em}
+.opp-m-v{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--tx)}
+.opp-action{background:var(--pu-l);border-radius:8px;padding:.55rem .8rem}
+.opp-action-l{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--pu);margin-bottom:3px}
+.opp-action-t{font-size:12px;color:#3C3489;line-height:1.5}
+
+/* SCORECARD */
+.scorecard{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;margin-bottom:1.2rem}
+.sc{background:var(--sf);border-radius:10px;border:1px solid var(--bd);padding:.8rem .95rem}
+.sc-lbl{font-size:11px;color:var(--tx2);font-weight:500;margin-bottom:4px}
+.sc-row{display:flex;align-items:baseline;gap:5px}
+.sc-v{font-family:var(--mono);font-size:17px;font-weight:500;color:var(--tx)}
+.sc-t{font-size:11px;color:var(--tx3)}
+.sc-bar{height:4px;background:var(--sf2);border-radius:3px;margin-top:5px;overflow:hidden}
+.sc-fill{height:100%;border-radius:3px}
+
+/* PORTFOLIO TAB */
+.port-banner{background:var(--tl-l);border:1px solid #5DCAA5;border-radius:12px;padding:.95rem 1.2rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.port-banner-t1{font-size:13px;font-weight:500;color:#085041;margin-bottom:2px}
+.port-banner-t2{font-size:11px;color:var(--tl)}
+.port-total{margin-left:auto;text-align:right}
+.port-total-v{font-family:var(--mono);font-size:22px;font-weight:700;color:#085041}
+.port-total-l{font-size:10px;color:var(--tl);text-transform:uppercase;letter-spacing:.06em}
+
+.sku-card{background:var(--sf);border-radius:10px;border:1px solid var(--bd);padding:.9rem 1rem;margin-bottom:10px}
+.sku-hdr{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.sku-cat-pill{font-size:10px;font-weight:500;padding:3px 10px;border-radius:20px}
+.sku-title{font-size:13px;font-weight:500;color:var(--tx)}
+.sku-perf{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:8px}
+.sku-m{background:var(--sf2);border-radius:8px;padding:.5rem .7rem}
+.sku-m-l{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.sku-m-v{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--tx)}
+.sku-bar-wrap{margin-bottom:7px}
+.trend-row{display:flex;gap:3px;align-items:flex-end;height:28px}
+.trend-bar{flex:1;border-radius:2px 2px 0 0;min-height:3px}
+.trend-lbl{display:flex;justify-content:space-between;font-size:9px;color:var(--tx3);margin-top:2px}
+.sku-note{background:var(--tl-l);border-radius:8px;padding:.5rem .75rem;font-size:12px;color:#085041;line-height:1.5}
+.sku-note-l{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--tl);margin-bottom:2px}
+
+/* PORTFOLIO OPPORTUNITY CARDS */
+.port-opp-card{background:var(--sf);border-radius:10px;border:1px solid var(--bd);padding:.9rem 1rem;margin-bottom:10px}
+.port-opp-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;gap:12px}
+.port-opp-title{font-size:13px;font-weight:500;color:var(--tx);margin-bottom:2px}
+.port-opp-src{font-size:11px;color:var(--tx3);font-style:italic}
+.port-opp-impact-v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--tl)}
+.port-opp-impact-l{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;text-align:right}
+.trend-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.ttag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500}
+.port-insight{background:var(--tl-l);border-radius:8px;padding:.55rem .8rem;margin-bottom:7px}
+.port-insight-l{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--tl);margin-bottom:2px}
+.port-insight-t{font-size:12px;color:#085041;line-height:1.5}
+.port-action{background:var(--gn-l);border-radius:8px;padding:.55rem .8rem}
+.port-action-l{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--gn);margin-bottom:2px}
+.port-action-t{font-size:12px;color:#27500A;line-height:1.5}
+
+/* SOURCE STRIP */
+.source-strip{display:flex;flex-wrap:wrap;gap:6px;margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--bd2)}
+.src-tag{font-size:10px;color:var(--tx3);background:var(--sf2);padding:2px 8px;border-radius:10px}
+
+/* SKU DRAWER */
+.sku-toggle{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--tl);background:none;border:none;cursor:pointer;padding:0;margin-top:8px;font-family:var(--font);text-decoration:underline;text-underline-offset:2px}
+.sku-toggle:hover{color:#085041}
+.sku-toggle .arr{font-size:10px;transition:transform .2s;display:inline-block}
+.sku-toggle.open .arr{transform:rotate(90deg)}
+.sku-drawer{display:none;margin-top:10px;border-top:1px solid var(--bd2);padding-top:10px}
+.sku-drawer.open{display:block}
+.sku-table{width:100%;border-collapse:collapse;font-size:12px}
+.sku-table th{text-align:left;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--tx3);padding:4px 8px 4px 0;border-bottom:1px solid var(--bd)}
+.sku-table td{padding:5px 8px 5px 0;border-bottom:1px solid var(--bd2);color:var(--tx);vertical-align:top}
+.sku-table tr:last-child td{border-bottom:none}
+.sku-table td:first-child{font-weight:500;color:var(--tx)}
+.sku-table td.price{font-family:var(--mono);font-size:11px;color:var(--tl)}
+.sku-table td.why{font-size:11px;color:var(--tx2);line-height:1.4}
+@media(max-width:640px){
+  .two-col,.three-col{grid-template-columns:1fr}
+  .kg{grid-template-columns:1fr 1fr}
+  .tabs,.sub-tabs{width:100%}.tab{flex:1;font-size:11px;padding:6px 4px;text-align:center}
+  .hb{grid-template-columns:auto 1fr;gap:10px}.hb-div,.hb-stat:nth-child(n+4){display:none}
+  .lc-row{grid-template-columns:1fr 1fr}
+  .opp-metrics,.sku-perf{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div>
+    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">
+      <div class="brand-logo">firstclub <span>/ intel hub</span></div>
+      <div class="brand-city"><div class="dot-live"></div>Bengaluru · Series A</div>
+    </div>
+    <div style="font-size:11px;color:var(--tx3);margin-top:4px">Internal dashboard · confidential · do not distribute</div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('ops')">Ops Manager</button>
+    <button class="tab" onclick="switchTab('city')">City Ops Head</button>
+    <button class="tab" onclick="switchTab('cx')">Business / CX</button>
+    <button class="tab t-port" onclick="switchTab('port')">Portfolio &amp; SKUs</button>
+    <button class="tab t-opp" onclick="switchTab('opp')">Opportunities</button>
+  </div>
+</div>
+
+<!-- HEALTH BANNER (persistent) -->
+<div class="hb">
+  <div class="score-ring">
+    <svg width="60" height="60" viewBox="0 0 60 60">
+      <circle cx="30" cy="30" r="24" fill="none" stroke="#edeae4" stroke-width="6"/>
+      <circle cx="30" cy="30" r="24" fill="none" stroke="#E8520A" stroke-width="6"
+        stroke-dasharray="150.8" stroke-dashoffset="30.2" stroke-linecap="round"/>
+    </svg>
+    <div class="score-num" style="color:var(--or)">80</div>
+  </div>
+  <div>
+    <div style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin-bottom:2px">Ops Health Score</div>
+    <div style="font-size:11px;color:var(--tx2)">Success rate · SLA · Rider utilisation · weighted composite</div>
+  </div>
+  <div class="hb-div"></div>
+  <div class="hb-stat"><div class="hb-val" style="color:var(--tl)">93.1%</div><div class="hb-lbl">Delivery success</div></div>
+  <div class="hb-div"></div>
+  <div class="hb-stat"><div class="hb-val" style="color:var(--rd)">7.8%</div><div class="hb-lbl">SLA breach</div></div>
+  <div class="hb-div"></div>
+  <div class="hb-stat"><div class="hb-val" style="color:var(--am)">76%</div><div class="hb-lbl">Rider utilisation</div></div>
+  <div class="hb-pills">
+    <div class="vp vp-bad">Whitefield understaffed</div>
+    <div class="vp vp-warn">SLA breach trending up</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ OPERATIONS MANAGER -->
+<div class="panel active" id="panel-ops">
+  <div class="panel-title">Operations Manager Dashboard</div>
+  <div class="panel-sub">Real-time rider performance, delivery health &amp; exception management · Bengaluru</div>
+  <div class="rp"><div class="rp-dot" style="background:var(--tl)"></div>Live · refreshes every 5 min</div>
+  <div class="fb">
+    <span class="fl">Time</span>
+    <button class="fc on">Today</button><button class="fc">Yesterday</button><button class="fc">This Week</button>
+    <span class="fl" style="margin-left:6px">Zone</span>
+    <button class="fc on">All Zones</button><button class="fc">Koramangala</button><button class="fc">HSR Layout</button><button class="fc">Whitefield</button><button class="fc">Indiranagar</button>
+    <span class="fl" style="margin-left:6px">Shift</span>
+    <button class="fc on">All</button><button class="fc">Morning</button><button class="fc">Evening</button>
+  </div>
+
+  <div class="sl">Live KPIs · today</div>
+  <div class="kg">
+    <div class="kpi al"><div class="kpi-lbl">Orders Dispatched</div><div class="kpi-val">1,142</div><div class="kpi-d up">+11% vs yesterday</div></div>
+    <div class="kpi atl"><div class="kpi-lbl">Delivery Success</div><div class="kpi-val">93.1%</div><div class="kpi-d wn">Target 96%</div></div>
+    <div class="kpi abl"><div class="kpi-lbl">Avg Delivery Time</div><div class="kpi-val">26m</div><div class="kpi-d up">-2m vs target</div></div>
+    <div class="kpi ard"><div class="kpi-lbl">Failed Deliveries</div><div class="kpi-val">79</div><div class="kpi-d dn">+9 vs avg</div></div>
+    <div class="kpi apu"><div class="kpi-lbl">Active Riders</div><div class="kpi-val">74 / 80</div><div class="kpi-d up">6 offline</div></div>
+    <div class="kpi aam"><div class="kpi-lbl">Rider Utilisation</div><div class="kpi-val">76%</div><div class="kpi-d wn">Low: Whitefield</div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.1rem">
+    <div class="card-title">Order lifecycle timing · avg today</div>
+    <div class="lc-row">
+      <div class="lc-cell"><div class="lc-lbl">Assigned → Pickup</div><div class="lc-val" style="color:var(--rd)">8.2m</div><div class="lc-tag" style="color:var(--rd)">Bottleneck</div></div>
+      <div class="lc-cell"><div class="lc-lbl">Pickup → In Transit</div><div class="lc-val" style="color:var(--tl)">2.1m</div><div class="lc-tag" style="color:var(--gn)">Healthy</div></div>
+      <div class="lc-cell"><div class="lc-lbl">Transit → Doorstep</div><div class="lc-val" style="color:var(--tl)">13.4m</div><div class="lc-tag" style="color:var(--gn)">Healthy</div></div>
+      <div class="lc-cell"><div class="lc-lbl">Doorstep → Delivered</div><div class="lc-val" style="color:var(--am)">3.8m</div><div class="lc-tag" style="color:var(--am)">Watch</div></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Failure reason breakdown · today</div>
+      <div class="bar-row"><div class="bar-lbl">Customer absent</div><div class="bar-tr"><div class="bar-fi" style="width:59%;background:var(--or)"></div></div><div class="bar-v">47</div></div>
+      <div class="bar-row"><div class="bar-lbl">Wrong address</div><div class="bar-tr"><div class="bar-fi" style="width:20%;background:var(--am)"></div></div><div class="bar-v">16</div></div>
+      <div class="bar-row"><div class="bar-lbl">Rider breakdown</div><div class="bar-tr"><div class="bar-fi" style="width:11%;background:var(--rd)"></div></div><div class="bar-v">9</div></div>
+      <div class="bar-row"><div class="bar-lbl">Out of stock</div><div class="bar-tr"><div class="bar-fi" style="width:9%;background:var(--bl)"></div></div><div class="bar-v">7</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Rider exceptions · live</div>
+      <table class="mt">
+        <tr><th>Rider</th><th>Zone</th><th>Issue</th><th>Status</th></tr>
+        <tr><td>R-038</td><td>Whitefield</td><td>Late 4 orders</td><td><span class="b ba">Alert</span></td></tr>
+        <tr><td>R-014</td><td>HSR Layout</td><td>No GPS ping</td><td><span class="b br">Offline</span></td></tr>
+        <tr><td>R-071</td><td>Whitefield</td><td>Idle &gt;25 min</td><td><span class="b ba">Idle</span></td></tr>
+        <tr><td>R-052</td><td>Koramangala</td><td>High failures</td><td><span class="b br">Review</span></td></tr>
+        <tr><td>R-007</td><td>Indiranagar</td><td>On track</td><td><span class="b bg">OK</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Orders in transit by status</div>
+      <div class="bar-row"><div class="bar-lbl">On time</div><div class="bar-tr"><div class="bar-fi" style="width:72%;background:var(--tl)"></div></div><div class="bar-v">521</div></div>
+      <div class="bar-row"><div class="bar-lbl">Delayed</div><div class="bar-tr"><div class="bar-fi" style="width:20%;background:var(--am)"></div></div><div class="bar-v">144</div></div>
+      <div class="bar-row"><div class="bar-lbl">Critical late</div><div class="bar-tr"><div class="bar-fi" style="width:8%;background:var(--rd)"></div></div><div class="bar-v">58</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Shift utilisation</div>
+      <div class="ir"><div class="ik">Morning shift riders</div><div class="iv">38</div></div>
+      <div class="ir"><div class="ik">Evening shift riders</div><div class="iv">36</div></div>
+      <div class="ir"><div class="ik">Avg orders / rider</div><div class="iv">15.4</div></div>
+      <div class="ir"><div class="ik">Peak load window</div><div class="iv">7:00 – 9:00 PM</div></div>
+      <div class="ir"><div class="ik">Idle rider-hours today</div><div class="iv">9.6 hrs</div></div>
+    </div>
+  </div>
+  <div class="dec">
+    <div class="dec-title">Decisions enabled</div>
+    <div class="di"><div class="d-dot"></div>Redeploy 3 idle Whitefield riders to Koramangala — peak demand mismatch active now</div>
+    <div class="di"><div class="d-dot"></div>R-014 (no GPS) — escalate to supervisor; flag order queue for reassignment</div>
+    <div class="di"><div class="d-dot"></div>8.2m assigned→pickup is today's bottleneck — investigate warehouse packing speed during 7–9 PM peak</div>
+    <div class="di"><div class="d-dot"></div>Trigger SMS retry window for 47 "customer absent" failures — 30 min reattempt SOP</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ CITY OPS HEAD -->
+<div class="panel" id="panel-city">
+  <div class="panel-title">City Ops Head Dashboard · Bengaluru</div>
+  <div class="panel-sub">Cross-zone performance, capacity planning &amp; dark store efficiency</div>
+  <div class="rp"><div class="rp-dot" style="background:var(--bl)"></div>Refreshes every 15 min · Daily summary 10 PM</div>
+  <div class="fb">
+    <span class="fl">Period</span>
+    <button class="fc on">This Week</button><button class="fc">Last 30 Days</button><button class="fc">MTD</button>
+    <span class="fl" style="margin-left:6px">Zone</span>
+    <button class="fc on">All</button><button class="fc">Koramangala</button><button class="fc">HSR Layout</button><button class="fc">Whitefield</button><button class="fc">Indiranagar</button><button class="fc">Electronic City</button>
+    <span class="fl" style="margin-left:6px">Category</span>
+    <button class="fc on">All</button><button class="fc">Groceries</button><button class="fc">Dairy</button><button class="fc">Meat &amp; Fish</button>
+  </div>
+
+  <div class="sl">City KPIs · this week</div>
+  <div class="kg">
+    <div class="kpi al"><div class="kpi-lbl">Total Orders</div><div class="kpi-val">7,994</div><div class="kpi-d up">+16% WoW</div></div>
+    <div class="kpi atl"><div class="kpi-lbl">Fulfilled GMV</div><div class="kpi-val">₹36.9L</div><div class="kpi-d up">+12% WoW</div></div>
+    <div class="kpi abl"><div class="kpi-lbl">Success Rate</div><div class="kpi-val">93.1%</div><div class="kpi-d wn">-0.6% WoW</div></div>
+    <div class="kpi ard"><div class="kpi-lbl">SLA Breach %</div><div class="kpi-val">7.8%</div><div class="kpi-d dn">+1.4% WoW</div></div>
+    <div class="kpi apu"><div class="kpi-lbl">Active Fleet</div><div class="kpi-val">186</div><div class="kpi-d wn">11 vacancies</div></div>
+    <div class="kpi aam"><div class="kpi-lbl">Cost / Delivery</div><div class="kpi-val">₹41.2</div><div class="kpi-d dn">+₹3.1 WoW</div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Zone performance · this week</div>
+      <table class="mt">
+        <tr><th>Zone</th><th>Orders</th><th>Success</th><th>Avg Time</th><th>Status</th></tr>
+        <tr><td>Koramangala</td><td>2,410</td><td>95.8%</td><td>23m</td><td><span class="b bg">Healthy</span></td></tr>
+        <tr><td>HSR Layout</td><td>1,940</td><td>94.2%</td><td>25m</td><td><span class="b bb">On Track</span></td></tr>
+        <tr><td>Indiranagar</td><td>1,620</td><td>93.7%</td><td>27m</td><td><span class="b bb">On Track</span></td></tr>
+        <tr><td>Whitefield</td><td>1,180</td><td>88.4%</td><td>34m</td><td><span class="b ba">At Risk</span></td></tr>
+        <tr><td>Electronic City</td><td>844</td><td>91.2%</td><td>30m</td><td><span class="b bb">On Track</span></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Rider capacity vs demand gap</div>
+      <div class="bar-row"><div class="bar-lbl">Koramangala</div><div class="bar-tr"><div class="bar-fi" style="width:90%;background:var(--tl)"></div></div><div class="bar-v">+6%</div></div>
+      <div class="bar-row"><div class="bar-lbl">HSR Layout</div><div class="bar-tr"><div class="bar-fi" style="width:86%;background:var(--tl)"></div></div><div class="bar-v">+4%</div></div>
+      <div class="bar-row"><div class="bar-lbl">Indiranagar</div><div class="bar-tr"><div class="bar-fi" style="width:82%;background:var(--am)"></div></div><div class="bar-v">-2%</div></div>
+      <div class="bar-row"><div class="bar-lbl">Whitefield</div><div class="bar-tr"><div class="bar-fi" style="width:100%;background:var(--rd)"></div></div><div class="bar-v">-18%</div></div>
+      <div class="bar-row"><div class="bar-lbl">Electronic City</div><div class="bar-tr"><div class="bar-fi" style="width:78%;background:var(--am)"></div></div><div class="bar-v">-5%</div></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Dark store utilisation</div>
+      <div class="bar-row"><div class="bar-lbl">Koramangala DS</div><div class="bar-tr"><div class="bar-fi" style="width:88%;background:var(--pu)"></div></div><div class="bar-v">88%</div></div>
+      <div class="bar-row"><div class="bar-lbl">HSR Layout DS</div><div class="bar-tr"><div class="bar-fi" style="width:82%;background:var(--pu)"></div></div><div class="bar-v">82%</div></div>
+      <div class="bar-row"><div class="bar-lbl">Indiranagar DS</div><div class="bar-tr"><div class="bar-fi" style="width:76%;background:var(--bl)"></div></div><div class="bar-v">76%</div></div>
+      <div class="bar-row"><div class="bar-lbl">Whitefield DS</div><div class="bar-tr"><div class="bar-fi" style="width:62%;background:var(--am)"></div></div><div class="bar-v">62%</div></div>
+      <div class="bar-row"><div class="bar-lbl">Electronic City DS</div><div class="bar-tr"><div class="bar-fi" style="width:58%;background:var(--am)"></div></div><div class="bar-v">58%</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Weekly operational health</div>
+      <div class="ir"><div class="ik">Est. SLA breach cost</div><div class="iv">₹1.4L</div></div>
+      <div class="ir"><div class="ik">New rider hires MTD</div><div class="iv">9 / 20 target</div></div>
+      <div class="ir"><div class="ik">Rider attrition (30d)</div><div class="iv">7.2%</div></div>
+      <div class="ir"><div class="ik">AUTO assignment rate</div><div class="iv">68%</div></div>
+      <div class="ir"><div class="ik">Peak demand spike</div><div class="iv">2.6x baseline</div></div>
+      <div class="ir"><div class="ik">AOV · avg basket</div><div class="iv">₹504 · 7.8 items</div></div>
+    </div>
+  </div>
+  <div class="dec">
+    <div class="dec-title">Decisions enabled</div>
+    <div class="di"><div class="d-dot"></div>Whitefield -18% capacity driving 88.4% success — 7 hires here are the single highest-ROI action this week</div>
+    <div class="di"><div class="d-dot"></div>Whitefield &amp; Electronic City DS at 58–62% — evaluate kirana partnership vs current lease cost</div>
+    <div class="di"><div class="d-dot"></div>SLA breach ₹1.4L/week → ₹6L/month at current growth — engineering fix on ETA model is ROI-positive</div>
+    <div class="di"><div class="d-dot"></div>16% WoW growth: trigger capacity expansion plan if sustained 3 more weeks</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ BUSINESS / CX -->
+<div class="panel" id="panel-cx">
+  <div class="panel-title">Business / CX Dashboard · Bengaluru</div>
+  <div class="panel-sub">Customer experience health, retention signals &amp; revenue quality</div>
+  <div class="rp"><div class="rp-dot" style="background:var(--pu)"></div>Refreshes every 30 min · Weekly digest Mon 9 AM</div>
+  <div class="fb">
+    <span class="fl">Period</span>
+    <button class="fc on">Last 30 Days</button><button class="fc">Last 7 Days</button><button class="fc">MTD</button>
+    <span class="fl" style="margin-left:6px">Segment</span>
+    <button class="fc on">All</button><button class="fc">New</button><button class="fc">Repeat</button><button class="fc">High Value</button>
+    <span class="fl" style="margin-left:6px">Zone</span>
+    <button class="fc on">All</button><button class="fc">Koramangala</button><button class="fc">HSR Layout</button><button class="fc">Whitefield</button>
+  </div>
+
+  <div class="sl">Customer &amp; revenue KPIs · last 30 days</div>
+  <div class="kg">
+    <div class="kpi al"><div class="kpi-lbl">Monthly Active Users</div><div class="kpi-val">18,240</div><div class="kpi-d up">+21% MoM</div></div>
+    <div class="kpi atl"><div class="kpi-lbl">Avg Order Value</div><div class="kpi-val">₹504</div><div class="kpi-d up">+₹31 MoM</div></div>
+    <div class="kpi apu"><div class="kpi-lbl">Repeat Order Rate</div><div class="kpi-val">58.4%</div><div class="kpi-d up">+3.1% MoM</div></div>
+    <div class="kpi ard"><div class="kpi-lbl">Customer CSAT</div><div class="kpi-val">4.0 / 5</div><div class="kpi-d wn">-0.3 MoM</div></div>
+    <div class="kpi aam"><div class="kpi-lbl">Complaint Rate</div><div class="kpi-val">4.2%</div><div class="kpi-d dn">+0.8% MoM</div></div>
+    <div class="kpi abl"><div class="kpi-lbl">Refund Rate</div><div class="kpi-val">2.4%</div><div class="kpi-d wn">+0.4% MoM</div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Top complaint categories</div>
+      <div class="bar-row"><div class="bar-lbl">Late delivery</div><div class="bar-tr"><div class="bar-fi" style="width:64%;background:var(--or)"></div></div><div class="bar-v">41%</div></div>
+      <div class="bar-row"><div class="bar-lbl">Poor freshness</div><div class="bar-tr"><div class="bar-fi" style="width:25%;background:var(--am)"></div></div><div class="bar-v">16%</div></div>
+      <div class="bar-row"><div class="bar-lbl">Wrong items</div><div class="bar-tr"><div class="bar-fi" style="width:20%;background:var(--am)"></div></div><div class="bar-v">13%</div></div>
+      <div class="bar-row"><div class="bar-lbl">Missing items</div><div class="bar-tr"><div class="bar-fi" style="width:17%;background:var(--rd)"></div></div><div class="bar-v">11%</div></div>
+      <div class="bar-row"><div class="bar-lbl">App / payment</div><div class="bar-tr"><div class="bar-fi" style="width:12%;background:var(--bl)"></div></div><div class="bar-v">8%</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Customer segment health</div>
+      <table class="mt">
+        <tr><th>Segment</th><th>Users</th><th>Repeat %</th><th>Health</th></tr>
+        <tr><td>Power users</td><td>2,180</td><td>91%</td><td><span class="b bg">Strong</span></td></tr>
+        <tr><td>Regular buyers</td><td>7,640</td><td>61%</td><td><span class="b bb">Stable</span></td></tr>
+        <tr><td>Occasional</td><td>5,810</td><td>28%</td><td><span class="b ba">Nurture</span></td></tr>
+        <tr><td>At-risk churn</td><td>1,920</td><td>10%</td><td><span class="b br">At Risk</span></td></tr>
+        <tr><td>New (30d)</td><td>690</td><td>—</td><td><span class="b bo">Watch</span></td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Revenue quality</div>
+      <div class="ir"><div class="ik">Promo-driven orders</div><div class="iv">31.2%</div></div>
+      <div class="ir"><div class="ik">Organic orders</div><div class="iv">68.8%</div></div>
+      <div class="ir"><div class="ik">Subscription users</div><div class="iv">2,840 (15.6%)</div></div>
+      <div class="ir"><div class="ik">Net revenue after refunds</div><div class="iv">₹34.1L</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">CX efficiency</div>
+      <div class="ir"><div class="ik">Avg resolution time</div><div class="iv">3.8 hrs</div></div>
+      <div class="ir"><div class="ik">First contact resolution</div><div class="iv">68%</div></div>
+      <div class="ir"><div class="ik">Tickets open &gt;24 hrs</div><div class="iv">41</div></div>
+      <div class="ir"><div class="ik">App store rating</div><div class="iv">4.1 / 5</div></div>
+    </div>
+  </div>
+  <div class="dec">
+    <div class="dec-title">Decisions enabled</div>
+    <div class="di"><div class="d-dot"></div>Win-back campaign for 1,920 at-risk churn users — personalised by last ordered category</div>
+    <div class="di"><div class="d-dot"></div>41% complaints are late delivery — ops problem not CX; escalate Whitefield SLA breach to city head</div>
+    <div class="di"><div class="d-dot"></div>5,810 occasional buyers at 28% repeat rate — subscription nudge can move 15–20% to regular tier</div>
+    <div class="di"><div class="d-dot"></div>Poor freshness complaints rising — cross-reference Whitefield DS supplier batch IDs</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ PORTFOLIO & SKUs -->
+<div class="panel" id="panel-port">
+  <div class="panel-title">Grocery Portfolio &amp; SKU Tracker · Bengaluru</div>
+  <div class="panel-sub">Current category performance, SKU health &amp; stock signals · internal only</div>
+  <div class="rp"><div class="rp-dot" style="background:var(--tl)"></div>Refreshes daily · Category review every Monday</div>
+  <div class="fb">
+    <span class="fl">Category</span>
+    <button class="fc on">All Categories</button><button class="fc">Fresh Produce</button><button class="fc">Dairy</button><button class="fc">Staples</button><button class="fc">Snacks</button><button class="fc">Beverages</button><button class="fc">Personal Care</button>
+    <span class="fl" style="margin-left:6px">Period</span>
+    <button class="fc on">Last 30 Days</button><button class="fc">Last 7 Days</button>
+  </div>
+
+  <div class="port-banner">
+    <div style="font-size:20px">🥬</div>
+    <div>
+      <div class="port-banner-t1">Active portfolio · Bengaluru dark stores</div>
+      <div class="port-banner-t2">Tracking 6 core categories · dark store SKU depth: 2,200–2,800 per location (industry standard: 2,000–3,000)</div>
+    </div>
+    <div class="port-total">
+      <div class="port-total-v">₹34.1L</div>
+      <div class="port-total-l">net GMV last 30 days</div>
+    </div>
+  </div>
+
+  <div class="sl">Category performance · last 30 days</div>
+  <div class="kg" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr))">
+    <div class="kpi atl"><div class="kpi-lbl">Fresh Produce</div><div class="kpi-val">28%</div><div class="kpi-d up">GMV share · +3%</div></div>
+    <div class="kpi al"><div class="kpi-lbl">Dairy &amp; Eggs</div><div class="kpi-val">22%</div><div class="kpi-d up">+1.4% MoM</div></div>
+    <div class="kpi abl"><div class="kpi-lbl">Staples &amp; Grains</div><div class="kpi-val">19%</div><div class="kpi-d wn">-0.8% MoM</div></div>
+    <div class="kpi aam"><div class="kpi-lbl">Snacks &amp; Bev</div><div class="kpi-val">14%</div><div class="kpi-d up">+2.1% MoM</div></div>
+    <div class="kpi apu"><div class="kpi-lbl">Personal Care</div><div class="kpi-val">10%</div><div class="kpi-d up">+1.2% MoM</div></div>
+    <div class="kpi agn"><div class="kpi-lbl">Meat &amp; Fish</div><div class="kpi-val">7%</div><div class="kpi-d wn">High return rate</div></div>
+  </div>
+
+  <!-- SKU CARDS -->
+  <div class="sl">Top SKU performance · last 7 days</div>
+
+  <div class="sku-card">
+    <div class="sku-hdr">
+      <div class="sku-cat-pill btl">Fresh Produce</div>
+      <div class="sku-title">Organic Tomatoes (500g) · Koramangala, HSR, Indiranagar</div>
+      <div style="margin-left:auto"><span class="b bg">Top seller</span></div>
+    </div>
+    <div class="sku-perf">
+      <div class="sku-m"><div class="sku-m-l">Orders / day</div><div class="sku-m-v">184</div></div>
+      <div class="sku-m"><div class="sku-m-l">Return rate</div><div class="sku-m-v">1.2%</div></div>
+      <div class="sku-m"><div class="sku-m-l">Avg price</div><div class="sku-m-v">₹48</div></div>
+      <div class="sku-m"><div class="sku-m-l">Stockout freq</div><div class="sku-m-v">0.4x/wk</div></div>
+    </div>
+    <div class="sku-note"><div class="sku-note-l">Insight</div>Bangalore consumers show higher preference for organic produce vs other metros — consistent with regional data. Stockout 0.4x/week suggests safety stock needs +20% buffer during peak season (Oct–Dec festival months).</div>
+  </div>
+
+  <div class="sku-card">
+    <div class="sku-hdr">
+      <div class="sku-cat-pill" style="background:var(--or-l);color:var(--or)">Dairy</div>
+      <div class="sku-title">Full-cream Milk 1L (Nandini / Amul) · all zones</div>
+      <div style="margin-left:auto"><span class="b bg">High velocity</span></div>
+    </div>
+    <div class="sku-perf">
+      <div class="sku-m"><div class="sku-m-l">Orders / day</div><div class="sku-m-v">312</div></div>
+      <div class="sku-m"><div class="sku-m-l">Return rate</div><div class="sku-m-v">0.3%</div></div>
+      <div class="sku-m"><div class="sku-m-l">Avg price</div><div class="sku-m-v">₹58</div></div>
+      <div class="sku-m"><div class="sku-m-l">Repeat purchase</div><div class="sku-m-v">4.8x/mo</div></div>
+    </div>
+    <div class="sku-note"><div class="sku-note-l">Insight</div>Dairy is the backbone of repeat purchase behaviour — 4.8x/month is best-in-portfolio. Missing a milk delivery is the #1 churn trigger. Prioritise stock reliability above all for this SKU. Consider 6AM pre-positioning at all dark stores.</div>
+  </div>
+
+  <div class="sku-card">
+    <div class="sku-hdr">
+      <div class="sku-cat-pill" style="background:var(--am-l);color:var(--am)">Snacks</div>
+      <div class="sku-title">Makhana (foxnut) snacks 100g · Koramangala, HSR</div>
+      <div style="margin-left:auto"><span class="b ba">Rising fast</span></div>
+    </div>
+    <div class="sku-perf">
+      <div class="sku-m"><div class="sku-m-l">Orders / day</div><div class="sku-m-v">97</div></div>
+      <div class="sku-m"><div class="sku-m-l">Return rate</div><div class="sku-m-v">0.8%</div></div>
+      <div class="sku-m"><div class="sku-m-l">Avg price</div><div class="sku-m-v">₹120</div></div>
+      <div class="sku-m"><div class="sku-m-l">WoW growth</div><div class="sku-m-v">+18%</div></div>
+    </div>
+    <div class="sku-note"><div class="sku-note-l">Insight</div>Makhana gaining traction nationally as a clean-label health snack — Indian brands like Farmley &amp; Yoga Bar driving awareness. +18% WoW growth with zero promotions. Add Whitefield &amp; Electronic City to stocking zones next cycle.</div>
+  </div>
+
+  <div class="sku-card">
+    <div class="sku-hdr">
+      <div class="sku-cat-pill" style="background:var(--rd-l);color:var(--rd)">Meat &amp; Fish</div>
+      <div class="sku-title">Fresh Chicken 500g · Koramangala, Whitefield</div>
+      <div style="margin-left:auto"><span class="b br">High returns</span></div>
+    </div>
+    <div class="sku-perf">
+      <div class="sku-m"><div class="sku-m-l">Orders / day</div><div class="sku-m-v">68</div></div>
+      <div class="sku-m"><div class="sku-m-l">Return rate</div><div class="sku-m-v">6.4%</div></div>
+      <div class="sku-m"><div class="sku-m-l">Avg price</div><div class="sku-m-v">₹195</div></div>
+      <div class="sku-m"><div class="sku-m-l">Complaint rate</div><div class="sku-m-v">4.1%</div></div>
+    </div>
+    <div class="sku-note"><div class="sku-note-l">Action needed</div>6.4% return rate &amp; 4.1% complaint rate — driven by freshness issues, likely cold chain gap between DS and doorstep. Review packaging (thermal bags) and mandate max 22-min delivery SLA for chilled SKUs. Escalate to category manager.</div>
+  </div>
+
+  <div class="sl" style="margin-top:.4rem">SKU watchlist · at-risk items</div>
+  <div class="card">
+    <table class="mt">
+      <tr><th>SKU</th><th>Category</th><th>Issue</th><th>7d Trend</th><th>Action</th></tr>
+      <tr><td>Atta 5kg (Fortune)</td><td>Staples</td><td>Stockout 2.1x/wk</td><td><span class="b br">Declining</span></td><td>Increase reorder trigger by 30%</td></tr>
+      <tr><td>Greek Yogurt 400g</td><td>Dairy</td><td>Low velocity (12/day)</td><td><span class="b ba">Flat</span></td><td>Bundle with fruit category</td></tr>
+      <tr><td>Oat Milk 1L (Oatly)</td><td>Beverages</td><td>High price sensitivity</td><td><span class="b bg">Growing</span></td><td>Monitor — premium segment signal</td></tr>
+      <tr><td>Protein Bars (RiteBite)</td><td>Snacks</td><td>Zone gap (no Whitefield)</td><td><span class="b bg">Growing</span></td><td>Add to Whitefield DS stocking list</td></tr>
+      <tr><td>Paneer 200g (fresh)</td><td>Dairy</td><td>Return rate 3.8%</td><td><span class="b ba">Flat</span></td><td>Freshness audit — supplier review</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ OPPORTUNITIES -->
+<div class="panel" id="panel-opp">
+  <div class="panel-title">Opportunities</div>
+  <div class="panel-sub">Operational efficiency gaps &amp; portfolio growth signals · Bengaluru · estimated monthly impact</div>
+
+  <div class="sub-tabs">
+    <button class="stab active" onclick="switchSubTab('eff')">Operational efficiency</button>
+    <button class="stab s-teal" onclick="switchSubTab('port')">Portfolio opportunities</button>
+  </div>
+
+  <!-- SUB-PANEL: OPERATIONAL EFFICIENCY -->
+  <div class="spanel active" id="spanel-eff">
+    <div class="opp-banner">
+      <div class="opp-icon">★</div>
+      <div>
+        <div class="opp-banner-t1">Total operational efficiency opportunity</div>
+        <div class="opp-banner-t2">5 identified gaps · based on current Bengaluru ops data + India q-commerce benchmarks (Blinkit, Zepto, Instamart)</div>
+      </div>
+      <div class="opp-total"><div class="opp-total-v">₹8.2L/mo</div><div class="opp-total-l">est. monthly upside</div></div>
+    </div>
+
+    <div class="sl">Current vs target scorecard</div>
+    <div class="scorecard">
+      <div class="sc"><div class="sc-lbl">Delivery success rate</div><div class="sc-row"><div class="sc-v">93.1%</div><div class="sc-t">→ 96%</div></div><div class="sc-bar"><div class="sc-fill" style="width:97%;background:var(--am)"></div></div></div>
+      <div class="sc"><div class="sc-lbl">Rider utilisation</div><div class="sc-row"><div class="sc-v">76%</div><div class="sc-t">→ 88%</div></div><div class="sc-bar"><div class="sc-fill" style="width:86%;background:var(--am)"></div></div></div>
+      <div class="sc"><div class="sc-lbl">AUTO assignment rate</div><div class="sc-row"><div class="sc-v">68%</div><div class="sc-t">→ 85%</div></div><div class="sc-bar"><div class="sc-fill" style="width:80%;background:var(--rd)"></div></div></div>
+      <div class="sc"><div class="sc-lbl">SLA breach %</div><div class="sc-row"><div class="sc-v">7.8%</div><div class="sc-t">→ &lt;3%</div></div><div class="sc-bar"><div class="sc-fill" style="width:60%;background:var(--rd)"></div></div></div>
+      <div class="sc"><div class="sc-lbl">Repeat order rate</div><div class="sc-row"><div class="sc-v">58.4%</div><div class="sc-t">→ 70%</div></div><div class="sc-bar"><div class="sc-fill" style="width:83%;background:var(--am)"></div></div></div>
+      <div class="sc"><div class="sc-lbl">Cost per delivery</div><div class="sc-row"><div class="sc-v">₹41.2</div><div class="sc-t">→ ₹34</div></div><div class="sc-bar"><div class="sc-fill" style="width:70%;background:var(--rd)"></div></div></div>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-hdr">
+        <div><div class="opp-title">Fix Whitefield rider deficit causing cascading delivery failures</div><div class="opp-desc">Whitefield has -18% rider capacity vs demand, producing 88.4% success rate — the lowest zone. Each 1% success improvement at current volume recovers ~80 orders/week. Whitefield's 34-min avg delivery time is 48% longer than Koramangala.</div></div>
+        <div style="flex-shrink:0;text-align:right"><div class="opp-impact-v">₹2.1L</div><div class="opp-impact-l">est. monthly upside</div></div>
+      </div>
+      <div class="opp-metrics">
+        <div class="opp-m"><div class="opp-m-l">Current success</div><div class="opp-m-v">88.4%</div></div>
+        <div class="opp-m"><div class="opp-m-l">Rider capacity gap</div><div class="opp-m-v">-18%</div></div>
+        <div class="opp-m"><div class="opp-m-l">Failed orders/wk</div><div class="opp-m-v">~137</div></div>
+      </div>
+      <div class="opp-action"><div class="opp-action-l">Recommended action</div><div class="opp-action-t">Hire 7 riders for Whitefield immediately. Cross-train from Koramangala (+6% surplus) as interim cover. At ₹504 AOV, recovering 137 failed orders/week = ₹69,000/week in reclaimed GMV alone.</div></div>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-hdr">
+        <div><div class="opp-title">Improve AUTO assignment rate from 68% → 85%</div><div class="opp-desc">MANUAL assignments introduce human latency. Blinkit &amp; Zepto benchmark at 90%+ AUTO. Closing this gap reduces avg assigned→pickup time from 8.2m to ~5.5m — the current #1 lifecycle bottleneck.</div></div>
+        <div style="flex-shrink:0;text-align:right"><div class="opp-impact-v">₹1.8L</div><div class="opp-impact-l">est. monthly upside</div></div>
+      </div>
+      <div class="opp-metrics">
+        <div class="opp-m"><div class="opp-m-l">Current AUTO %</div><div class="opp-m-v">68%</div></div>
+        <div class="opp-m"><div class="opp-m-l">Industry benchmark</div><div class="opp-m-v">90%+</div></div>
+        <div class="opp-m"><div class="opp-m-l">Time saved/order</div><div class="opp-m-v">~2.7m</div></div>
+      </div>
+      <div class="opp-action"><div class="opp-action-l">Recommended action</div><div class="opp-action-t">Audit why 32% of assignments are MANUAL — likely system fallbacks on edge cases. Productise top 3 MANUAL triggers as AUTO rules. Direct path: faster assignment → lower SLA breach → fewer CX tickets → cost savings chain.</div></div>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-hdr">
+        <div><div class="opp-title">Eliminate 9.6 idle rider-hours/day — shift scheduling optimisation</div><div class="opp-desc">At ₹180/hr conservative rider cost, 9.6 idle hrs/day = ₹52,000/month in unproductive wages. Demand-led shift scheduling tied to hourly forecasting can cut idle time by 40–50%.</div></div>
+        <div style="flex-shrink:0;text-align:right"><div class="opp-impact-v">₹1.4L</div><div class="opp-impact-l">est. monthly savings</div></div>
+      </div>
+      <div class="opp-metrics">
+        <div class="opp-m"><div class="opp-m-l">Idle hrs/day</div><div class="opp-m-v">9.6 hrs</div></div>
+        <div class="opp-m"><div class="opp-m-l">Monthly waste</div><div class="opp-m-v">~₹52K</div></div>
+        <div class="opp-m"><div class="opp-m-l">Reducible by</div><div class="opp-m-v">~45%</div></div>
+      </div>
+      <div class="opp-action"><div class="opp-action-l">Recommended action</div><div class="opp-action-t">Build demand forecast per zone per hour using rider_timeline + rider_orders data. Flex shift start times ±30 min based on 7-day rolling patterns. Immediate: stagger Whitefield morning shift 45 min later — idle signal is clear.</div></div>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-hdr">
+        <div><div class="opp-title">Convert 5,810 occasional buyers to regular via subscription nudge</div><div class="opp-desc">Occasional buyers at 28% repeat rate are the largest untapped retention pool. Benchmarks show subscription nudges convert 15–20% of this cohort to regular tier within 60 days, doubling their order frequency.</div></div>
+        <div style="flex-shrink:0;text-align:right"><div class="opp-impact-v">₹1.6L</div><div class="opp-impact-l">est. monthly GMV uplift</div></div>
+      </div>
+      <div class="opp-metrics">
+        <div class="opp-m"><div class="opp-m-l">Occasional users</div><div class="opp-m-v">5,810</div></div>
+        <div class="opp-m"><div class="opp-m-l">Conversion target</div><div class="opp-m-v">~870 users</div></div>
+        <div class="opp-m"><div class="opp-m-l">Uplift/user/mo</div><div class="opp-m-v">~₹1,840</div></div>
+      </div>
+      <div class="opp-action"><div class="opp-action-l">Recommended action</div><div class="opp-action-t">Trigger subscription prompt after 2nd order. Offer first month at 50% discount. Koramangala &amp; HSR Layout occasional buyers are highest income profile — prioritise there for pilot before city-wide rollout.</div></div>
+    </div>
+
+    <div class="opp-card">
+      <div class="opp-hdr">
+        <div><div class="opp-title">Recalibrate SLA ETA model — 7.8% breach is partly a data problem</div><div class="opp-desc">Current breach rate likely reflects underestimated ETAs in the system, not purely ops delays. Recalibrating pickup_to_delivery_estimated_time_minutes per zone + order_type can halve apparent breach rate without changing field operations.</div></div>
+        <div style="flex-shrink:0;text-align:right"><div class="opp-impact-v">₹1.3L</div><div class="opp-impact-l">est. CX cost avoided</div></div>
+      </div>
+      <div class="opp-metrics">
+        <div class="opp-m"><div class="opp-m-l">Current breach %</div><div class="opp-m-v">7.8%</div></div>
+        <div class="opp-m"><div class="opp-m-l">Target breach %</div><div class="opp-m-v">&lt;3%</div></div>
+        <div class="opp-m"><div class="opp-m-l">Weekly CX cost</div><div class="opp-m-v">~₹35K</div></div>
+      </div>
+      <div class="opp-action"><div class="opp-action-l">Recommended action</div><div class="opp-action-t">Run SQL: compare actual pickup→delivered vs estimated by zone, hour, and order_type. Where systematic gap &gt;3 min exists, update ETA constants. Reduces CX tickets, improves CSAT score, eliminates false SLA alarms in dashboards.</div></div>
+    </div>
+  </div>
+
+  <!-- SUB-PANEL: PORTFOLIO OPPORTUNITIES -->
+  <div class="spanel" id="spanel-port">
+    <div class="opp-banner" style="background:var(--tl-l);border-color:#5DCAA5">
+      <div class="opp-icon" style="background:var(--tl-l);border-color:#5DCAA5">🌱</div>
+      <div>
+        <div class="opp-banner-t1" style="color:#085041">Total portfolio expansion opportunity · Bengaluru</div>
+        <div class="opp-banner-t2" style="color:var(--tl)">6 categories identified from national &amp; global grocery trends · sourced from Bain, Statista, IMARC, Kearney, Nexdigm 2025 reports</div>
+      </div>
+      <div class="opp-total"><div class="port-total-v" style="font-family:var(--mono);font-size:22px;font-weight:700;color:#085041">₹6.4L/mo</div><div class="port-total-l" style="font-size:10px;color:var(--tl);text-transform:uppercase;letter-spacing:.06em">est. GMV potential</div></div>
+    </div>
+
+    <!-- PORT OPP 1 -->
+    <div class="port-opp-card">
+      <div class="port-opp-hdr">
+        <div>
+          <div class="port-opp-title">Organic &amp; clean-label produce — Bengaluru's fastest-growing grocery preference</div>
+          <div class="port-opp-src">Sources: IMARC India Organic Food Market 2025 · Actowiz Blinkit/Zepto regional data 2025 · Nexdigm Q-Commerce Report 2025</div>
+        </div>
+        <div style="flex-shrink:0;text-align:right"><div class="port-opp-impact-v">₹1.8L</div><div class="port-opp-impact-l">est. monthly GMV add</div></div>
+      </div>
+      <div class="trend-tags">
+        <div class="ttag btl">National trend</div>
+        <div class="ttag" style="background:var(--gn-l);color:var(--gn)">India organic market ₹1,510cr (2024) → CAGR 22%</div>
+        <div class="ttag bo">Bangalore-specific signal</div>
+        <div class="ttag bb">63% urban consumers willing to pay premium (Nielsen)</div>
+      </div>
+      <div class="port-insight"><div class="port-insight-l">Market intelligence</div><div class="port-insight-t">Regional data from Actowiz (2025) specifically flags Bangalore consumers show higher preference for organic produce compared to Delhi which skews toward packaged dairy. India's organic food market is projected to reach ₹11,000cr by 2034 at 22% CAGR. Clean-label demand is being led by urban millennials in Bengaluru, Mumbai, and Delhi — FirstClub's exact demographic. Brands gaining traction: Farmley, Organic India, Conscious Food.</div></div>
+      <div class="port-action"><div class="port-action-l">Portfolio recommendation</div><div class="port-action-t">Expand organic produce SKUs from current ~12 to 25–30. Add certified organic variants of top sellers (tomatoes, spinach, bananas) at 15–20% premium pricing. Segment as "FirstClub Organic" collection — creates a brand identity layer that Blinkit and Zepto currently lack in this price band.</div></div>
+      <button class="sku-toggle" onclick="toggleSku(this)"><span class="arr">▶</span> View suggested SKUs (8)</button>
+      <div class="sku-drawer">
+        <table class="sku-table">
+          <tr><th>Brand &amp; SKU</th><th>Size</th><th>Est. Price</th><th>Why stock it</th></tr>
+          <tr><td>Organic India — Organic Tomatoes</td><td>500g</td><td class="price">₹62</td><td class="why">Certified organic, widely trusted brand, direct swap for current non-organic bestseller</td></tr>
+          <tr><td>Farmley — Organic Spinach</td><td>250g</td><td class="price">₹54</td><td class="why">Farmley dominant in clean-label vegs; Bengaluru millennials already buying on Blinkit</td></tr>
+          <tr><td>Conscious Food — Organic Basmati Rice</td><td>1kg</td><td class="price">₹189</td><td class="why">Premium staple, high AOV, strong repeat purchase; no organic rice on FirstClub currently</td></tr>
+          <tr><td>24 Mantra Organic — Toor Dal</td><td>500g</td><td class="price">₹98</td><td class="why">Market leader in organic pulses in South India; Bengaluru-familiar brand</td></tr>
+          <tr><td>Organic India — Tulsi Green Tea</td><td>25 bags</td><td class="price">₹145</td><td class="why">High basket-value add-on; immunity + wellness positioning; strong Q-commerce velocity</td></tr>
+          <tr><td>Farmley — Organic Bananas</td><td>6 pcs (~500g)</td><td class="price">₹58</td><td class="why">Volume driver; organic fruit demand up 31% YoY in Bengaluru (Actowiz 2025)</td></tr>
+          <tr><td>Nourish Organics — Mixed Seeds</td><td>150g</td><td class="price">₹175</td><td class="why">Bengaluru D2C brand; premium snacking + health positioning; not on major Q-commerce yet</td></tr>
+          <tr><td>Down to Earth — Organic Carrots</td><td>500g</td><td class="price">₹68</td><td class="why">Cold chain friendly; lunchbox staple for families in HSR, Koramangala; low return risk</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- PORT OPP 2 -->
+    <div class="port-opp-card">
+      <div class="port-opp-hdr">
+        <div>
+          <div class="port-opp-title">Millet &amp; ancient grains — government-backed, Gen Z-adopted supercategory</div>
+          <div class="port-opp-src">Sources: India Q-Commerce Snacks & Beverages report (Nexdigm 2025) · Accio India Snack Trends 2025 · IMARC Organic Snack India 2025</div>
+        </div>
+        <div style="flex-shrink:0;text-align:right"><div class="port-opp-impact-v">₹1.2L</div><div class="port-opp-impact-l">est. monthly GMV add</div></div>
+      </div>
+      <div class="trend-tags">
+        <div class="ttag btl">National trend</div>
+        <div class="ttag" style="background:var(--gn-l);color:var(--gn)">2023 declared UN International Year of Millets</div>
+        <div class="ttag bp">Global momentum</div>
+        <div class="ttag bb">India millet snack CAGR 8.55% to 2033 (IMARC)</div>
+      </div>
+      <div class="port-insight"><div class="port-insight-l">Market intelligence</div><div class="port-insight-t">The Indian government's International Year of Millets push in 2023 has created lasting demand. Brands like Soulfull, Slurrp Farm, and Yogabar now appear on Blinkit's top-stocked health snack shelves. Snacks &amp; Beverages is Q-commerce's fastest-growing sub-category in India — Nexdigm specifically identifies it as the biggest near-term portfolio opportunity for quick-commerce players. Makhana (already in FirstClub portfolio at +18% WoW) is the canary for this broader trend.</div></div>
+      <div class="port-action"><div class="port-action-l">Portfolio recommendation</div><div class="port-action-t">Add 8–12 millet-based SKUs: ragi cookies, jowar puffs, bajra rotis, millet mixes. Target HSR Layout and Koramangala first (tech workers, young families). Suggested brands: Soulfull, Slurrp Farm, The Millet Store (Bengaluru-based D2C brand — local sourcing advantage).</div></div>
+      <button class="sku-toggle" onclick="toggleSku(this)"><span class="arr">▶</span> View suggested SKUs (9)</button>
+      <div class="sku-drawer">
+        <table class="sku-table">
+          <tr><th>Brand &amp; SKU</th><th>Size</th><th>Est. Price</th><th>Why stock it</th></tr>
+          <tr><td>Soulfull — Ragi Bites (Masala)</td><td>150g</td><td class="price">₹90</td><td class="why">Market leader in ragi snacks; Blinkit top seller; great crossover for health-snacking segment</td></tr>
+          <tr><td>Slurrp Farm — Millet Pancake Mix</td><td>150g</td><td class="price">₹175</td><td class="why">Popular with young families; kid-friendly; strong repeat purchase; premium tier</td></tr>
+          <tr><td>The Millet Store — Foxtail Millet</td><td>500g</td><td class="price">₹85</td><td class="why">Bengaluru-born brand; local loyalty; D2C exclusive advantage; Koramangala/HSR stronghold</td></tr>
+          <tr><td>Yogabar — Millet &amp; Nut Granola</td><td>400g</td><td class="price">₹299</td><td class="why">Premium breakfast segment; high AOV; Yogabar one of fastest-growing health snack brands India 2025</td></tr>
+          <tr><td>True Elements — Jowar Puffs</td><td>100g</td><td class="price">₹120</td><td class="why">Clean ingredient list; growing Q-commerce presence; impulse snack price point</td></tr>
+          <tr><td>Slurrp Farm — Jowar &amp; Oats Porridge</td><td>200g</td><td class="price">₹199</td><td class="why">Breakfast staple alternative; strong repeat; tech-worker morning routine product</td></tr>
+          <tr><td>Soulfull — Millet Muesli</td><td>400g</td><td class="price">₹249</td><td class="why">Weekend breakfast buyer; high basket-lift item; premium health positioning</td></tr>
+          <tr><td>The Millet Store — Bajra Rotis (frozen)</td><td>6 pcs</td><td class="price">₹95</td><td class="why">Ready-to-heat; bridges millet + convenience; no equivalent on Blinkit Bengaluru currently</td></tr>
+          <tr><td>Farmley — Ragi Flour</td><td>500g</td><td class="price">₹72</td><td class="why">High-velocity staple; at-home cooking staple for South Indian households; strong repeat</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- PORT OPP 3 -->
+    <div class="port-opp-card">
+      <div class="port-opp-hdr">
+        <div>
+          <div class="port-opp-title">Plant-based dairy alternatives — premium AOV driver with no current FirstClub presence</div>
+          <div class="port-opp-src">Sources: Supermarket News Organic Report March 2025 · Straits Research Organic Snacks 2025 · India Healthy Food Market IMARC 2025</div>
+        </div>
+        <div style="flex-shrink:0;text-align:right"><div class="port-opp-impact-v">₹1.0L</div><div class="port-opp-impact-l">est. monthly GMV add</div></div>
+      </div>
+      <div class="trend-tags">
+        <div class="ttag bp">Global signal</div>
+        <div class="ttag" style="background:var(--gn-l);color:var(--gn)">Organic dairy alternatives +18.2% globally in 2025</div>
+        <div class="ttag btl">India signal</div>
+        <div class="ttag bb">Oat Milk (Oatly) already in FirstClub watchlist — growing</div>
+      </div>
+      <div class="port-insight"><div class="port-insight-l">Market intelligence</div><div class="port-insight-t">Supermarket News (March 2025) reports organic dairy alternatives grew 18.2% globally — the second-fastest organic category behind produce. In India, urban millennials in Bengaluru are the primary adopters, driven by lactose intolerance awareness and fitness culture. FirstClub's Oatly SKU watchlist entry showing growth with "high price sensitivity" is actually a product-market fit signal — they're buying despite the price.</div></div>
+      <div class="port-action"><div class="port-action-l">Portfolio recommendation</div><div class="port-action-t">Add 5–8 plant-based dairy SKUs: oat milk (Oatly, Urban Platter), almond milk, soy curd, coconut yogurt. Price range ₹80–₹220. These items have 3–4x the AOV of regular dairy — high basket value lift. Stock at Koramangala and Indiranagar DS first where premium consumer density is highest.</div></div>
+      <button class="sku-toggle" onclick="toggleSku(this)"><span class="arr">▶</span> View suggested SKUs (7)</button>
+      <div class="sku-drawer">
+        <table class="sku-table">
+          <tr><th>Brand &amp; SKU</th><th>Size</th><th>Est. Price</th><th>Why stock it</th></tr>
+          <tr><td>Oatly — Oat Drink (Original)</td><td>1L</td><td class="price">₹349</td><td class="why">Global category leader; already in FirstClub watchlist showing growth despite premium price — confirmed product-market fit</td></tr>
+          <tr><td>Urban Platter — Almond Milk (Unsweetened)</td><td>1L</td><td class="price">₹189</td><td class="why">Indian brand, more accessible price than Oatly; strong repeat; fitness community favourite</td></tr>
+          <tr><td>Raw Pressery — Almond Milk</td><td>200ml</td><td class="price">₹85</td><td class="why">Single-serve format ideal for Q-commerce impulse purchase; trusted cold-pressed brand</td></tr>
+          <tr><td>Epigamia — Coconut Yogurt</td><td>90g</td><td class="price">₹55</td><td class="why">Mainstream D2C brand; widely known; bridges conventional dairy buyer into plant-based</td></tr>
+          <tr><td>So Good — Soy Milk (Vitasoy)</td><td>1L</td><td class="price">₹155</td><td class="why">Best-in-class soy; strong in South India; affordable plant-based entry point</td></tr>
+          <tr><td>Urban Platter — Coconut Cream</td><td>400ml</td><td class="price">₹120</td><td class="why">Cooking ingredient; high AOV; South Indian cuisine staple — unique to plant-based range</td></tr>
+          <tr><td>Good Mylk — Cashew Milk</td><td>250ml</td><td class="price">₹95</td><td class="why">Indian D2C; premium micro-brand with Bengaluru following; exclusivity potential</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- PORT OPP 4 -->
+    <div class="port-opp-card">
+      <div class="port-opp-hdr">
+        <div>
+          <div class="port-opp-title">Functional &amp; probiotic foods — India's fastest-growing health food sub-segment</div>
+          <div class="port-opp-src">Sources: IMARC India Healthy Food Market 2025 (OpenPR Mar 2026) · Data Bridge Healthy Snacks Market 2025 · Kearney Q-Commerce India Oct 2025</div>
+        </div>
+        <div style="flex-shrink:0;text-align:right"><div class="port-opp-impact-v">₹0.9L</div><div class="port-opp-impact-l">est. monthly GMV add</div></div>
+      </div>
+      <div class="trend-tags">
+        <div class="ttag bp">Global + India</div>
+        <div class="ttag" style="background:var(--gn-l);color:var(--gn)">Functional foods fastest-growing sub-category India 2025</div>
+        <div class="ttag ba">Emerging</div>
+        <div class="ttag bb">Immunity boosters · gut health · protein-enriched</div>
+      </div>
+      <div class="port-insight"><div class="port-insight-l">Market intelligence</div><div class="port-insight-t">IMARC's March 2026 India Healthy Food Market report identifies functional foods as the fastest-growing sub-category, driven by "food as medicine" thinking among urban millennials. Products specifically engineered for targeted health outcomes — immunity-boosting beverages, gut-health probiotics, high-protein plant-based snacks — are gaining rapid traction. Quick-commerce platforms are the primary channel because impulse purchase is strong for functional items.</div></div>
+      <div class="port-action"><div class="port-action-l">Portfolio recommendation</div><div class="port-action-t">Add 10–15 functional food SKUs: kombucha (Raw Pressery, Buchi), probiotic lassi, protein bars (RiteBite, Yoga Bar), moringa powder, ashwagandha supplements. These SKUs are uniquely suited to FirstClub's quality positioning and command ₹150–₹400 price points — high basket value.</div></div>
+      <button class="sku-toggle" onclick="toggleSku(this)"><span class="arr">▶</span> View suggested SKUs (10)</button>
+      <div class="sku-drawer">
+        <table class="sku-table">
+          <tr><th>Brand &amp; SKU</th><th>Size</th><th>Est. Price</th><th>Why stock it</th></tr>
+          <tr><td>Raw Pressery — Kombucha (Ginger Lemon)</td><td>250ml</td><td class="price">₹120</td><td class="why">Category pioneer in India; refrigerated = Q-commerce native; strong Bengaluru fitness community pull</td></tr>
+          <tr><td>Buchi — Kombucha (Original)</td><td>330ml</td><td class="price">₹145</td><td class="why">Premium craft kombucha; Bengaluru-origin brand; differentiated storytelling for "Made in Blr" positioning</td></tr>
+          <tr><td>Epigamia — Probiotic Yogurt (Mango)</td><td>85g</td><td class="price">₹40</td><td class="why">Mass-market entry into functional dairy; high velocity; bridges mainstream and health segment</td></tr>
+          <tr><td>Yogabar — Protein Bar (Choco Fudge)</td><td>60g</td><td class="price">₹99</td><td class="why">Currently in FirstClub as RiteBite; Yogabar commands higher AOV and better brand recall with 25–35 age group</td></tr>
+          <tr><td>RiteBite Max Protein — Bar (Choco Berry)</td><td>67g</td><td class="price">₹85</td><td class="why">Already in FirstClub portfolio (watchlist); growing; add Whitefield and expand zone coverage</td></tr>
+          <tr><td>Organic India — Moringa Powder</td><td>100g</td><td class="price">₹249</td><td class="why">Superfood with strong South India cultural familiarity; premium; high margin; no Q-commerce exclusivity yet</td></tr>
+          <tr><td>Kapiva — Ashwagandha Ghee</td><td>250ml</td><td class="price">₹549</td><td class="why">High AOV Ayurvedic wellness product; Bengaluru premium-health buyer profile; strong D2C following</td></tr>
+          <tr><td>Wellbeing Nutrition — Probiotic + Prebiotic</td><td>30 caps</td><td class="price">₹649</td><td class="why">Highest AOV in category; supplements on Q-commerce growing 40% YoY (Kearney 2025); impulse wellness</td></tr>
+          <tr><td>True Elements — Chia Seeds</td><td>250g</td><td class="price">₹199</td><td class="why">Functional pantry staple; smoothie culture in Bengaluru; high repeat purchase</td></tr>
+          <tr><td>Farmley — Roasted Pumpkin Seeds</td><td>200g</td><td class="price">₹159</td><td class="why">Clean-label snack + functional positioning; growing in corporate-office consumer segment in Whitefield</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- PORT OPP 5 -->
+    <div class="port-opp-card">
+      <div class="port-opp-hdr">
+        <div>
+          <div class="port-opp-title">Premium ready-to-cook &amp; meal kits — Bengaluru's working professional sweet spot</div>
+          <div class="port-opp-src">Sources: Bain &amp; Company How India Shops Online 2025 · Mukund Mohan Q-Commerce India May 2025 · Fynd Future of Q-Commerce India 2025</div>
+        </div>
+        <div style="flex-shrink:0;text-align:right"><div class="port-opp-impact-v">₹0.9L</div><div class="port-opp-impact-l">est. monthly GMV add</div></div>
+      </div>
+      <div class="trend-tags">
+        <div class="ttag btl">India signal</div>
+        <div class="ttag" style="background:var(--gn-l);color:var(--gn)">Q-commerce now expanding beyond staples into meal solutions</div>
+        <div class="ttag bo">Bengaluru-specific</div>
+        <div class="ttag bb">High density tech workforce — time-poor, premium-tolerant</div>
+      </div>
+      <div class="port-insight"><div class="port-insight-l">Market intelligence</div><div class="port-insight-t">Bain's 2025 India report notes Q-commerce is actively expanding into non-grocery categories with 15–20% of GMV now coming from general merchandise. Bengaluru's concentration of tech workers (Koramangala, Whitefield, HSR Layout) represents the highest density of time-poor, premium-tolerant consumers in India. Ready-to-cook is the bridge between grocery and food delivery — currently a gap in FirstClub's portfolio that competitors haven't fully cracked in quick-commerce either.</div></div>
+      <div class="port-action"><div class="port-action-l">Portfolio recommendation</div><div class="port-action-t">Launch "FirstClub Meal Kits" as a differentiated sub-brand: pre-portioned ingredients for 2-serving recipes (dal makhani, pasta, stir fry). 15–20 SKUs at ₹180–₹380. Unique positioning vs Blinkit/Zepto which are ingredient-only. High AOV lift, high repeat purchase once adopted.</div></div>
+      <button class="sku-toggle" onclick="toggleSku(this)"><span class="arr">▶</span> View suggested SKUs (8)</button>
+      <div class="sku-drawer">
+        <table class="sku-table">
+          <tr><th>Brand &amp; SKU</th><th>Size / Serves</th><th>Est. Price</th><th>Why stock it</th></tr>
+          <tr><td>iD Fresh Food — Idli / Dosa Batter</td><td>1kg (8–10 servings)</td><td class="price">₹70</td><td class="why">Bengaluru-born brand; mass-market beloved; #1 ready-to-cook SKU for South Indian households; daily use</td></tr>
+          <tr><td>iD Fresh Food — Malabar Parota</td><td>5 pcs</td><td class="price">₹65</td><td class="why">High velocity; frozen ready-to-heat; perfect Q-commerce dinner-time impulse purchase</td></tr>
+          <tr><td>Saffola — Masala Oats (Veggie Twist)</td><td>39g (1 serving)</td><td class="price">₹25</td><td class="why">Healthy breakfast RTC; volume driver; lunch staple for Whitefield tech-park workers</td></tr>
+          <tr><td>MTR — Dal Makhani Ready-to-Eat</td><td>300g (2 servings)</td><td class="price">₹95</td><td class="why">Category staple; extremely high repeat; works as standalone meal or with parota — natural bundle</td></tr>
+          <tr><td>Fresho (FirstClub branded) — Paneer Butter Masala Kit</td><td>2 servings</td><td class="price">₹220</td><td class="why">Private label opportunity; pre-portioned veg + spice kit; Bengaluru's most-ordered curry type</td></tr>
+          <tr><td>Veeba — Caesar Salad Dressing Kit</td><td>300g</td><td class="price">₹185</td><td class="why">Premium working-professional segment; salad culture growing in Koramangala, Indiranagar zones</td></tr>
+          <tr><td>Wingreens Farms — Pasta + Sauce Kit</td><td>2 servings</td><td class="price">₹245</td><td class="why">Differentiated RTC with millennial appeal; no direct equivalent on Blinkit in meal-kit format</td></tr>
+          <tr><td>Fresho — Biryani Ingredient Kit</td><td>2–3 servings</td><td class="price">₹310</td><td class="why">Weekend cooking staple for Bengaluru families; high AOV; first-mover meal-kit format in q-commerce</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- PORT OPP 6 -->
+    <div class="port-opp-card">
+      <div class="port-opp-hdr">
+        <div>
+          <div class="port-opp-title">D2C &amp; Bengaluru-native brands — local sourcing as a moat vs national platforms</div>
+          <div class="port-opp-src">Sources: Mukund Mohan Q-Commerce India 2025 · Bain India Shops Online 2025 · India-Briefing Q-Commerce Key Players 2025</div>
+        </div>
+        <div style="flex-shrink:0;text-align:right"><div class="port-opp-impact-v">₹0.6L</div><div class="port-opp-impact-l">est. monthly GMV add</div></div>
+      </div>
+      <div class="trend-tags">
+        <div class="ttag bp">Strategic</div>
+        <div class="ttag" style="background:var(--gn-l);color:var(--gn)">D2C brands = 30% of Q-commerce sales nationally (2025)</div>
+        <div class="ttag ba">Differentiation</div>
+        <div class="ttag btl">Local brands unavailable on Blinkit/Zepto = moat</div>
+      </div>
+      <div class="port-insight"><div class="port-insight-l">Market intelligence</div><div class="port-insight-t">India-Briefing (2025) notes D2C brands now account for 30% of Q-commerce sales nationally. Bengaluru has a thriving D2C food startup scene — The Millet Store, ID Fresh Food, Eat Natural, Nourish Organics are all Bengaluru-born brands with loyal local followings. Stocking these exclusively (or first) gives FirstClub a product story that national platforms cannot replicate immediately, and supports local sourcing which resonates with the health-conscious demographic.</div></div>
+      <div class="port-action"><div class="port-action-l">Portfolio recommendation</div><div class="port-action-t">Partner with 5–8 Bengaluru D2C food brands for exclusive or early-access listings. Start with ID Fresh Food (idli/dosa batter — already mass market), The Millet Store, and Eat Natural. Frame as "Made in Bengaluru" collection. First-mover exclusivity is the window — act before Blinkit expands D2C partnerships in Karnataka.</div></div>
+      <button class="sku-toggle" onclick="toggleSku(this)"><span class="arr">▶</span> View suggested SKUs (8)</button>
+      <div class="sku-drawer">
+        <table class="sku-table">
+          <tr><th>Brand &amp; SKU</th><th>Size</th><th>Est. Price</th><th>Why stock it</th></tr>
+          <tr><td>iD Fresh Food — Whole Wheat Parota</td><td>5 pcs</td><td class="price">₹75</td><td class="why">Bengaluru-born icon brand; healthier variant of top-selling Malabar parota; mass + health segment crossover</td></tr>
+          <tr><td>The Millet Store — Ragi Ladoo</td><td>250g</td><td class="price">₹180</td><td class="why">Local Bengaluru D2C; traditional sweet + health positioning; festival season top seller; exclusivity achievable</td></tr>
+          <tr><td>Eat Natural — Granola (Fruit &amp; Nut)</td><td>400g</td><td class="price">₹310</td><td class="why">Premium Bengaluru brand; currently D2C only; Q-commerce listing would be first on any platform — strong PR value</td></tr>
+          <tr><td>Nourish Organics — Breakfast Bars</td><td>6-bar pack</td><td class="price">₹270</td><td class="why">Bengaluru-origin; high-quality certified organic; corporate gifting crossover; Koramangala office buyer target</td></tr>
+          <tr><td>Buchi Brew — Kombucha Variety Pack</td><td>3×330ml</td><td class="price">₹390</td><td class="why">Craft brand founded in Bengaluru; gifting &amp; trial format; conversation-starter product; not on Blinkit/Zepto</td></tr>
+          <tr><td>Pristine — Cold Pressed Coconut Oil</td><td>500ml</td><td class="price">₹299</td><td class="why">South India staple with premium positioning; Bengaluru-market beloved; high repurchase; large SKU value</td></tr>
+          <tr><td>The Whole Truth — Protein Bar</td><td>52g</td><td class="price">₹110</td><td class="why">Viral D2C health brand; no artificial ingredients; social-media driven; strong 25–35 yr Bengaluru demographic pull</td></tr>
+          <tr><td>Ketofy — Keto Bread</td><td>400g</td><td class="price">₹449</td><td class="why">Highest AOV in bread category; niche but growing fast in Bengaluru fitness community; no Q-commerce listing currently</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="source-strip">
+      <div style="font-size:11px;color:var(--tx3);width:100%;margin-bottom:6px">Data sources cited in portfolio analysis:</div>
+      <div class="src-tag">Bain &amp; Company · How India Shops Online 2025</div>
+      <div class="src-tag">IMARC · India Organic Food Market 2025</div>
+      <div class="src-tag">IMARC · India Healthy Food Market Mar 2026</div>
+      <div class="src-tag">Nexdigm · India Q-Commerce Market Report 2025</div>
+      <div class="src-tag">Kearney · Rise of Quick Commerce India Oct 2025</div>
+      <div class="src-tag">Supermarket News · Organic Products March 2025</div>
+      <div class="src-tag">Actowiz · Regional Grocery Price Data Blinkit/Zepto 2025</div>
+      <div class="src-tag">Mukund Mohan · Q-Commerce Trends India May 2025</div>
+      <div class="src-tag">India-Briefing · Q-Commerce Key Players Jul 2025</div>
+      <div class="src-tag">Accio · Top Trending Snacks India 2025</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /shell -->
+
+<script>
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    const ids=['ops','city','cx','port','opp'];
+    t.classList.toggle('active',ids[i]===id);
+  });
+  document.querySelectorAll('.panel').forEach(p=>{
+    p.classList.toggle('active',p.id==='panel-'+id);
+  });
+}
+function switchSubTab(id){
+  document.querySelectorAll('.stab').forEach(t=>{
+    t.classList.toggle('active',t.getAttribute('onclick').includes("'"+id+"'"));
+  });
+  document.querySelectorAll('.spanel').forEach(p=>{
+    p.classList.toggle('active',p.id==='spanel-'+id);
+  });
+}
+document.querySelectorAll('.fc').forEach(c=>{
+  c.addEventListener('click',function(){this.classList.toggle('on')});
+});
+function toggleSku(btn){
+  btn.classList.toggle('open');
+  const drawer=btn.nextElementSibling;
+  drawer.classList.toggle('open');
+  const arr=btn.querySelector('.arr');
+  arr.textContent=drawer.classList.contains('open')?'▼':'▶';
+}
+</script>
+</body>
+</html>
